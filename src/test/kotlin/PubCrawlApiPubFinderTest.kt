@@ -8,8 +8,38 @@ import org.http4k.routing.bind
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
-object PubCrawlApiPubFinderTest: Spek({
+object PubCrawlApiPubFinderTest : Spek({
     describe("PubCrawlApiPubFinder") {
+
+        val fakeApiResponse = """{
+            |   "Pubs": [{
+            |       "Name": "Example pub",
+            |       "RegularBeers": [
+            |           "Regular beer 1",
+            |           "Regular beer 2"
+            |       ],
+            |       "GuestBeers": [
+            |           "Guest beer 1",
+            |           "Guest beer 2"
+            |       ],
+            |       "PubService": "http://example.com/pub/abc123",
+            |       "Id": "12345",
+            |       "CreateTS": "2019-01-01 10:30:00",
+            |       "IrrelevantProperty": "We don't care about this"
+            |   }]
+            |}""".trimMargin()
+
+        class MockPubCrawlApi {
+            lateinit var receivedRequest: Request
+
+            val mock =
+                "/pubcache" bind GET to { request ->
+                    this.receivedRequest = request
+                    Response(OK)
+                        .header("Content-type", "application/json")
+                        .body(fakeApiResponse)
+                }
+        }
 
         val mockPubCrawlApi = MockPubCrawlApi()
 
@@ -19,32 +49,48 @@ object PubCrawlApiPubFinderTest: Spek({
         val lng = 40.00
         val range = 0.003
 
-        pubCrawlApiPubFinder(lat, lng, range)
+        val pubs = pubCrawlApiPubFinder(lat, lng, range)
 
         it("calls the correct url") {
-            assertThat(mockPubCrawlApi.request.uri.path).isEqualTo("/pubcache")
+            assertThat(mockPubCrawlApi.receivedRequest.uri.path).isEqualTo("/pubcache")
         }
 
-        it("api is called with the specified latitude") {
-            assertThat(mockPubCrawlApi.request.query("lat")).isEqualTo(lat.toString())
+        it("the api is called with the specified latitude") {
+            assertThat(mockPubCrawlApi.receivedRequest.query("lat")).isEqualTo(lat.toString())
         }
 
-        it("api is called with the specified longitude") {
-            assertThat(mockPubCrawlApi.request.query("lng")).isEqualTo(lng.toString())
+        it("the api is called with the specified longitude") {
+            assertThat(mockPubCrawlApi.receivedRequest.query("lng")).isEqualTo(lng.toString())
         }
 
-        it("api is called with the specified range") {
-            assertThat(mockPubCrawlApi.request.query("deg")).isEqualTo(range.toString())
+        it("the api is called with the specified range") {
+            assertThat(mockPubCrawlApi.receivedRequest.query("deg")).isEqualTo(range.toString())
+        }
+
+        it("the returned object contains a pub with the right name") {
+            assertThat(pubs.first().name).isEqualTo("Example pub")
+        }
+
+        it("the returned object contains a pub with the right regular beers") {
+            assertThat(pubs.first().regularBeers[0]).isEqualTo("Regular beer 1")
+            assertThat(pubs.first().regularBeers[1]).isEqualTo("Regular beer 2")
+        }
+
+        it("the returned object contains a pub with the right guest beers") {
+            assertThat(pubs.first().guestBeers[0]).isEqualTo("Guest beer 1")
+            assertThat(pubs.first().guestBeers[1]).isEqualTo("Guest beer 2")
+        }
+
+        it("the returned object contains a pub with the right pubservice") {
+            assertThat(pubs.first().pubService).isEqualTo("http://example.com/pub/abc123")
+        }
+
+        it("the returned object contains a pub with the right id") {
+            assertThat(pubs.first().id).isEqualTo(12345)
+        }
+
+        it("the returned object contains a pub with the right created timestamp") {
+            assertThat(pubs.first().createTS).isEqualTo("2019-01-01 10:30:00")
         }
     }
 })
-
-private class MockPubCrawlApi {
-    lateinit var request: Request
-
-    val mock =
-        "/pubcache" bind GET to { request ->
-            this.request = request
-            Response(OK)
-        }
-}
