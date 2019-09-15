@@ -1,5 +1,8 @@
+package unitTests
+
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import createPubFinder
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
