@@ -1,18 +1,14 @@
 internal fun List<Pub>.toListOfBeers(): List<Beer> =
-    this.map { pub ->
-        pub.regularBeers.map { beerName ->
+    this.flatMap{ it.extractBeers() }
+
+private fun Pub.extractBeers(): List<Beer> =
+    (this.regularBeers.map { it to true } + this.guestBeers.map { it to false})
+        .map {
+            val (beerName, isRegular) = it
             Beer(
                 beerName,
-                pub.name,
-                pub.pubService,
-                true
-            )
-        } + pub.guestBeers.map { beerName ->
-            Beer(
-                beerName,
-                pub.name,
-                pub.pubService,
-                false
+                this.name,
+                this.pubService,
+                isRegular
             )
         }
-    }.flatten()
