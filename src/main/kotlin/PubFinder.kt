@@ -6,7 +6,7 @@ import org.http4k.format.Jackson.auto
 
 private val pubsLens = Body.auto<Pubs>().toLens()
 
-internal fun createPubCrawlApiPubFinder(client: HttpHandler) =
+internal fun createPubFinder(client: HttpHandler) =
     fun(lat: Double, lng: Double, range: Double): List<Pub> {
         val response = client(Request(GET, "/pubcache?lat=${lat}&lng=${lng}&deg=${range}"))
         val pubs = pubsLens(response)
