@@ -4,8 +4,7 @@ import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
 object BeerExtratorTest : Spek({
-    val pubs = listOf(
-        Pub(
+    val pub1 = Pub(
             name = "Example pub 1",
             regularBeers = listOf(
                 "Regular beer"
@@ -14,8 +13,9 @@ object BeerExtratorTest : Spek({
             pubService = "http://example.com/pub1",
             id = 1,
             createTS = "pub 1 created timestamp"
-        ),
-        Pub(
+        )
+
+    val pub2 = Pub(
             name = "Example pub 2",
             regularBeers = listOf(),
             guestBeers = listOf(
@@ -25,7 +25,8 @@ object BeerExtratorTest : Spek({
             id = 1,
             createTS = "pub 2 created timestamp"
         )
-    )
+
+    val pubs = listOf(pub1, pub2)
 
     describe("extracts a list of beers from a list of pubs") {
         val actualOutputSorted = pubs.toListOfBeers().sortedBy { it.name }
