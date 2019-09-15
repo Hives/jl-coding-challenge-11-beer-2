@@ -1,9 +1,10 @@
 import assertk.assertThat
-import assertk.assertions.isEqualTo
+import assertk.assertions.contains
+import assertk.assertions.hasSize
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
-object BeerExtratorTest : Spek({
+object BeerExtractorTest : Spek({
     val pub1 = Pub(
             name = "Example pub 1",
             regularBeers = listOf(
@@ -29,15 +30,14 @@ object BeerExtratorTest : Spek({
     val pubs = listOf(pub1, pub2)
 
     describe("extracts a list of beers from a list of pubs") {
-        val actualOutputSorted = pubs.toListOfBeers().sortedBy { it.name }
+        val actualOutput = pubs.toListOfBeers().sortedBy { it.name }
 
         it("two beers are extracted") {
-            assertThat(actualOutputSorted.size).isEqualTo(2)
+            assertThat(actualOutput).hasSize(2)
         }
 
-        it("first extracted beer has right details") {
-            val firstExtractedBeer = actualOutputSorted[0]
-            assertThat(firstExtractedBeer).isEqualTo(Beer(
+        it("output contains first beer") {
+            assertThat(actualOutput).contains(Beer(
                 name = "Guest beer",
                 pub = "Example pub 2",
                 pubService = "http://example.com/pub2",
@@ -45,9 +45,8 @@ object BeerExtratorTest : Spek({
             ))
         }
 
-        it("second extracted beer has right details") {
-            val secondExtractedBeer = actualOutputSorted[1]
-            assertThat(secondExtractedBeer).isEqualTo(Beer(
+        it("output contains second beer") {
+            assertThat(actualOutput).contains(Beer(
                 name = "Regular beer",
                 pub = "Example pub 1",
                 pubService = "http://example.com/pub1",
