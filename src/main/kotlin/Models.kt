@@ -13,3 +13,10 @@ data class Pub(
 
 @JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy::class)
 data class Pubs(val pubs: List<Pub>)
+
+data class Beer(
+    val name: String,
+    val pub: String,
+    val pubService: String,
+    val isRegular: Boolean
+)
