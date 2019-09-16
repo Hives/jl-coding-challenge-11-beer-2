@@ -14,6 +14,12 @@ data class Pub(
 @JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy::class)
 data class Pubs(val pubs: List<Pub>)
 
+data class Location(
+    val lng: Double,
+    val lat: Double,
+    val deg: Double
+)
+
 data class Beer(
     val name: String,
     val pub: String,

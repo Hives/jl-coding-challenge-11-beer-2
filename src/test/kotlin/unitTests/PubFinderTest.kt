@@ -1,6 +1,7 @@
 package unitTests
 
 import Beer
+import Location
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import createPubFinder
@@ -42,26 +43,28 @@ object PubFinderTest : Spek({
             val mockPubCrawlApi = MockPubCrawlApi(dummyJson)
             val pubFinder = createPubFinder(mockPubCrawlApi.mock)
 
-            val lat = 20.00
-            val lng = 40.00
-            val range = 0.003
+            val location = Location(
+                lat = 20.00,
+                lng = 40.00,
+                deg = 0.003
+            )
 
-            pubFinder(lng, lat, range)
+            pubFinder(location)
 
             it("calls the correct url") {
                 assertThat(mockPubCrawlApi.receivedRequest.uri.path).isEqualTo("/pubcache/")
             }
 
             it("the api is called with the specified longitude") {
-                assertThat(mockPubCrawlApi.receivedRequest.query("lng")).isEqualTo(lng.toString())
+                assertThat(mockPubCrawlApi.receivedRequest.query("lng")).isEqualTo(location.lng.toString())
             }
 
             it("the api is called with the specified latitude") {
-                assertThat(mockPubCrawlApi.receivedRequest.query("lat")).isEqualTo(lat.toString())
+                assertThat(mockPubCrawlApi.receivedRequest.query("lat")).isEqualTo(location.lat.toString())
             }
 
-            it("the api is called with the specified range") {
-                assertThat(mockPubCrawlApi.receivedRequest.query("deg")).isEqualTo(range.toString())
+            it("the api is called with the specified deg") {
+                assertThat(mockPubCrawlApi.receivedRequest.query("deg")).isEqualTo(location.deg.toString())
             }
         }
 
@@ -87,7 +90,7 @@ object PubFinderTest : Spek({
 
             val pubFinder = createPubFinder(mockPubCrawlApi.mock)
 
-            val pubs = pubFinder(1.0, 1.0, 1.0)
+            val pubs = pubFinder(Location(1.0, 1.0, 1.0))
 
             it("the returned object contains a pub with the right name") {
                 assertThat(pubs.single().name).isEqualTo("Example pub")
@@ -127,7 +130,7 @@ object PubFinderTest : Spek({
 
             val mockPubCrawlApi = MockPubCrawlApi(dummyJson)
             val pubFinder = createPubFinder(mockPubCrawlApi.mock)
-            val response = pubFinder(1.0, 1.0, 1.0)
+            val response = pubFinder(Location(1.0, 1.0, 1.0))
 
             it("regular and guest beer default to empty lists") {
                 val pub = response.single()
