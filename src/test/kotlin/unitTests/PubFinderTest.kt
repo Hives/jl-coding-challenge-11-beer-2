@@ -46,18 +46,18 @@ object PubFinderTest : Spek({
             val lng = 40.00
             val range = 0.003
 
-            pubFinder(lat, lng, range)
+            pubFinder(lng, lat, range)
 
             it("calls the correct url") {
-                assertThat(mockPubCrawlApi.receivedRequest.uri.path).isEqualTo("/pubcache")
-            }
-
-            it("the api is called with the specified latitude") {
-                assertThat(mockPubCrawlApi.receivedRequest.query("lat")).isEqualTo(lat.toString())
+                assertThat(mockPubCrawlApi.receivedRequest.uri.path).isEqualTo("/pubcache/")
             }
 
             it("the api is called with the specified longitude") {
                 assertThat(mockPubCrawlApi.receivedRequest.query("lng")).isEqualTo(lng.toString())
+            }
+
+            it("the api is called with the specified latitude") {
+                assertThat(mockPubCrawlApi.receivedRequest.query("lat")).isEqualTo(lat.toString())
             }
 
             it("the api is called with the specified range") {

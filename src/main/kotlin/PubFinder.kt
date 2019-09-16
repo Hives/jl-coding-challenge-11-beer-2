@@ -5,8 +5,8 @@ import org.http4k.core.Request
 import org.http4k.format.Jackson.auto
 
 internal fun createPubFinder(client: HttpHandler) =
-    fun(lat: Double, lng: Double, range: Double): List<Pub> {
-        val response = client(Request(GET, "/pubcache?lat=${lat}&lng=${lng}&deg=${range}"))
+    fun(lng: Double, lat: Double, range: Double): List<Pub> {
+        val response = client(Request(GET, "/pubcache/?lat=${lat}&lng=${lng}&deg=${range}"))
         return pubsLens(response).pubs
     }
 
