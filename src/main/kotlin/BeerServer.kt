@@ -9,10 +9,9 @@ import org.http4k.server.Http4kServer
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 
-fun BeerServer(port: Int): Http4kServer = BeerRoutes().asServer(Jetty(port))
+fun beerServer(port: Int): Http4kServer = beerRoutes().asServer(Jetty(port))
 
-fun BeerRoutes(): HttpHandler = routes(
+fun beerRoutes(): HttpHandler = routes(
     "/" bind GET to { _: Request -> Response(OK).body("Hello") },
     "/beerapi/beers" bind GET to { _: Request -> Response(OK) }
 )
-

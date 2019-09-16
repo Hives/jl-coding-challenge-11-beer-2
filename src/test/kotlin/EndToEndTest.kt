@@ -10,7 +10,7 @@ import org.spekframework.spek2.style.specification.describe
 object EndToEndTest: Spek({
     describe ("Endpoints") {
         val port = 9999
-        val server = BeerServer(port)
+        val server = beerServer(port)
         val client = OkHttp()
 
         it ("GET '/' should return 200 (Success)") {

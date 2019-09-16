@@ -1,4 +1,4 @@
 fun main() {
-    val server = BeerServer(9999)
+    val server = beerServer(9999)
     server.start()
 }
