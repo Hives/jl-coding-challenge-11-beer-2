@@ -7,7 +7,7 @@ import assertk.assertions.contains
 import assertk.assertions.hasSize
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import toListOfBeers
+import extractBeers
 
 object BeerExtractorTest : Spek({
     val pub1 = Pub(
@@ -35,7 +35,7 @@ object BeerExtractorTest : Spek({
     val pubs = listOf(pub1, pub2)
 
     describe("extracts a list of beers from a list of pubs") {
-        val actualOutput = pubs.toListOfBeers().sortedBy { it.name }
+        val actualOutput = pubs.extractBeers().sortedBy { it.name }
 
         it("two beers are extracted") {
             assertThat(actualOutput).hasSize(2)

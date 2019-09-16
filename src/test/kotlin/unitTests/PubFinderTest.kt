@@ -1,6 +1,9 @@
 package unitTests
 
+import Pub
 import assertk.assertThat
+import assertk.assertions.containsExactly
+import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import createPubFinder
 import org.http4k.core.Method.GET
@@ -16,6 +19,14 @@ object PubFinderTest : Spek({
 
         val fakeApiResponse = """{
             |   "Pubs": [{
+            |       "Name": "",
+            |       "RegularBeers": [],
+            |       "GuestBeers": [],
+            |       "PubService": "",
+            |       "Id": "12345",
+            |       "CreateTS": "2019-01-01 10:30:00",
+            |       "IrrelevantProperty": "We don't care about this"
+            |   }, {
             |       "Name": "Example pub",
             |       "RegularBeers": [
             |           "Regular beer 1",
@@ -27,7 +38,15 @@ object PubFinderTest : Spek({
             |       ],
             |       "PubService": "http://example.com/pub/abc123",
             |       "Id": "12345",
-            |       "CreateTS": "2019-01-01 10:30:00",
+            |       "CreateTS": "2019-01-03 10:30:00",
+            |       "IrrelevantProperty": "We don't care about this"
+            |   }, {
+            |       "Name": "",
+            |       "RegularBeers": [],
+            |       "GuestBeers": [],
+            |       "PubService": "",
+            |       "Id": "12345",
+            |       "CreateTS": "2019-01-02 10:30:00",
             |       "IrrelevantProperty": "We don't care about this"
             |   }]
             |}""".trimMargin()
@@ -72,31 +91,30 @@ object PubFinderTest : Spek({
             }
         }
 
-        describe("returns the correct response") {
+        describe("gives the correct response") {
+            it("returns only the most recent of duplicate pubs") {
+                assertThat(pubs).hasSize(1)
+                assertThat(pubs.single().createTS).isEqualTo("2019-01-03 10:30:00")
+            }
+
             it("the returned object contains a pub with the right name") {
-                assertThat(pubs.first().name).isEqualTo("Example pub")
+                assertThat(pubs.single().name).isEqualTo("Example pub")
             }
 
             it("the returned object contains a pub with the right regular beers") {
-                assertThat(pubs.first().regularBeers[0]).isEqualTo("Regular beer 1")
-                assertThat(pubs.first().regularBeers[1]).isEqualTo("Regular beer 2")
+                assertThat(pubs.single().regularBeers).isEqualTo(listOf("Regular beer 1", "Regular beer 2"))
             }
 
             it("the returned object contains a pub with the right guest beers") {
-                assertThat(pubs.first().guestBeers[0]).isEqualTo("Guest beer 1")
-                assertThat(pubs.first().guestBeers[1]).isEqualTo("Guest beer 2")
+                assertThat(pubs.single().guestBeers).isEqualTo(listOf("Guest beer 1", "Guest beer 2"))
             }
 
             it("the returned object contains a pub with the right pubservice") {
-                assertThat(pubs.first().pubService).isEqualTo("http://example.com/pub/abc123")
+                assertThat(pubs.single().pubService).isEqualTo("http://example.com/pub/abc123")
             }
 
             it("the returned object contains a pub with the right id") {
-                assertThat(pubs.first().id).isEqualTo(12345)
-            }
-
-            it("the returned object contains a pub with the right created timestamp") {
-                assertThat(pubs.first().createTS).isEqualTo("2019-01-01 10:30:00")
+                assertThat(pubs.single().id).isEqualTo(12345)
             }
         }
     }
