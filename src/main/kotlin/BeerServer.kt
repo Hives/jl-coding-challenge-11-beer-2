@@ -12,6 +12,11 @@ import org.http4k.server.asServer
 fun BeerServer(port: Int): Http4kServer = BeerServer().asServer(Jetty(port))
 
 fun BeerServer(): HttpHandler = routes(
-    "/" bind GET to { _: Request -> Response(OK).body("Hello") },
+    "/" bind GET to { _: Request -> Response(OK) },
     "/beerapi/beers" bind GET to { _: Request -> Response(OK) }
 )
+
+fun main() {
+    val server = BeerServer(9999)
+    server.start()
+}
