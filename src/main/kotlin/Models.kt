@@ -1,7 +1,5 @@
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
-import org.http4k.core.Body
-import org.http4k.format.Jackson.auto
 
 @JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy::class)
 data class Pub(
