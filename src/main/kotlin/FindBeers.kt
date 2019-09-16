@@ -1,4 +1,9 @@
-internal fun List<Pub>.extractBeers(): List<Beer> = this
+internal fun createFindBeers(pubFinder: PubFinder) =
+    fun(location: Location): List<Beer> =
+        pubFinder(location)
+            .extractBeers()
+
+private fun List<Pub>.extractBeers(): List<Beer> = this
     .removeDuplicates()
     .flatMap { it.extractBeers() }
 

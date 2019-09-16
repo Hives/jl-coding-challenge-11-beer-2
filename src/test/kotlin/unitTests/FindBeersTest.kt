@@ -1,18 +1,20 @@
 package unitTests
 
 import Beer
+import Location
 import Pub
+import PubFinder
 import assertk.assertThat
-import assertk.assertions.contains
-import assertk.assertions.hasSize
-import assertk.assertions.isEmpty
-import assertk.assertions.isNotEmpty
-import extractBeers
+import assertk.assertions.*
+import createFindBeers
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
-object ExtractBeersTest : Spek({
-    describe("Beer extractor") {
+object FindBeersTest : Spek({
+    describe("finding beers") {
         val pub1 = Pub(
             name = "Example pub 1",
             regularBeers = listOf(
@@ -35,7 +37,18 @@ object ExtractBeersTest : Spek({
             createTS = "pub 2 created timestamp"
         )
 
-        val actualOutput = listOf(pub1, pub2).extractBeers()
+        val mockLocation = mockk<Location>()
+        val mockFindPubs = mockk<PubFinder>()
+        val findPubsCalledWith = slot<Location>()
+        every { mockFindPubs(capture(findPubsCalledWith)) }
+            .returns(listOf(pub1, pub2))
+
+        val findBeers = createFindBeers(mockFindPubs)
+        val actualOutput = findBeers(mockLocation)
+
+        it("calls pub finder with the right location") {
+            assertThat(findPubsCalledWith.captured).isEqualTo(mockLocation)
+        }
 
         it("two beers are extracted") {
             assertThat(actualOutput).hasSize(2)
@@ -100,7 +113,14 @@ object ExtractBeersTest : Spek({
             createTS = "2019-01-03 10:30:00"
         )
 
-        val actualOutput = listOf(oldEntry1, newEntry, oldEntry2).extractBeers()
+        val mockLocation = mockk<Location>()
+        val mockFindPubs = mockk<PubFinder>()
+        val findPubsCalledWith = slot<Location>()
+        every { mockFindPubs(capture(findPubsCalledWith)) }
+            .returns(listOf(oldEntry1, newEntry, oldEntry2))
+
+        val findBeers = createFindBeers(mockFindPubs)
+        val actualOutput = findBeers(mockLocation)
 
         it("beers from old entries are not extracted") {
             assertThat(actualOutput.filter { it.name == "Old regular beer" }).isEmpty()
