@@ -1,9 +1,7 @@
 package unitTests
 
-import Pub
+import Beer
 import assertk.assertThat
-import assertk.assertions.containsExactly
-import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
 import createPubFinder
 import org.http4k.core.Method.GET
@@ -17,41 +15,7 @@ import org.spekframework.spek2.style.specification.describe
 object PubFinderTest : Spek({
     describe("the pub finder") {
 
-        val fakeApiResponse = """{
-            |   "Pubs": [{
-            |       "Name": "",
-            |       "RegularBeers": [],
-            |       "GuestBeers": [],
-            |       "PubService": "",
-            |       "Id": "12345",
-            |       "CreateTS": "2019-01-01 10:30:00",
-            |       "IrrelevantProperty": "We don't care about this"
-            |   }, {
-            |       "Name": "Example pub",
-            |       "RegularBeers": [
-            |           "Regular beer 1",
-            |           "Regular beer 2"
-            |       ],
-            |       "GuestBeers": [
-            |           "Guest beer 1",
-            |           "Guest beer 2"
-            |       ],
-            |       "PubService": "http://example.com/pub/abc123",
-            |       "Id": "12345",
-            |       "CreateTS": "2019-01-03 10:30:00",
-            |       "IrrelevantProperty": "We don't care about this"
-            |   }, {
-            |       "Name": "",
-            |       "RegularBeers": [],
-            |       "GuestBeers": [],
-            |       "PubService": "",
-            |       "Id": "12345",
-            |       "CreateTS": "2019-01-02 10:30:00",
-            |       "IrrelevantProperty": "We don't care about this"
-            |   }]
-            |}""".trimMargin()
-
-        class MockPubCrawlApi {
+        class MockPubCrawlApi(fakeResponseJson: String) {
             lateinit var receivedRequest: Request
 
             val mock =
@@ -59,21 +23,31 @@ object PubFinderTest : Spek({
                     this.receivedRequest = request
                     Response(OK)
                         .header("Content-type", "application/json")
-                        .body(fakeApiResponse)
+                        .body(fakeResponseJson)
                 }
         }
 
-        val mockPubCrawlApi = MockPubCrawlApi()
-
-        val pubFinder = createPubFinder(mockPubCrawlApi.mock)
-
-        val lat = 20.00
-        val lng = 40.00
-        val range = 0.003
-
-        val pubs = pubFinder(lat, lng, range)
-
         describe("calls the API with the correct parameters") {
+            val dummyJson = """{
+                |   "Pubs": [{
+                |       "Name": "",
+                |       "RegularBeers": [],
+                |       "GuestBeers": [],
+                |       "PubService": "",
+                |       "Id": "",
+                |       "CreateTS": ""
+                |   }]
+                |}""".trimMargin()
+
+            val mockPubCrawlApi = MockPubCrawlApi(dummyJson)
+            val pubFinder = createPubFinder(mockPubCrawlApi.mock)
+
+            val lat = 20.00
+            val lng = 40.00
+            val range = 0.003
+
+            pubFinder(lat, lng, range)
+
             it("calls the correct url") {
                 assertThat(mockPubCrawlApi.receivedRequest.uri.path).isEqualTo("/pubcache")
             }
@@ -91,11 +65,29 @@ object PubFinderTest : Spek({
             }
         }
 
-        describe("gives the correct response") {
-            it("returns only the most recent of duplicate pubs") {
-                assertThat(pubs).hasSize(1)
-                assertThat(pubs.single().createTS).isEqualTo("2019-01-03 10:30:00")
-            }
+        describe("returns the correct response") {
+            val dummyJson = """{
+                "Pubs": [{
+                |       "Name": "Example pub",
+                |       "RegularBeers": [
+                |           "Regular beer 1",
+                |           "Regular beer 2"
+                |       ],
+                |       "GuestBeers": [
+                |           "Guest beer 1",
+                |           "Guest beer 2"
+                |       ],
+                |       "PubService": "http://example.com/pub/123",
+                |       "Id": "12345",
+                |       "CreateTS": "2019-01-02 10:30:00"
+                |   }]
+                |}""".trimMargin()
+
+            val mockPubCrawlApi = MockPubCrawlApi(dummyJson)
+
+            val pubFinder = createPubFinder(mockPubCrawlApi.mock)
+
+            val pubs = pubFinder(1.0, 1.0, 1.0)
 
             it("the returned object contains a pub with the right name") {
                 assertThat(pubs.single().name).isEqualTo("Example pub")
@@ -110,12 +102,39 @@ object PubFinderTest : Spek({
             }
 
             it("the returned object contains a pub with the right pubservice") {
-                assertThat(pubs.single().pubService).isEqualTo("http://example.com/pub/abc123")
+                assertThat(pubs.single().pubService).isEqualTo("http://example.com/pub/123")
             }
 
             it("the returned object contains a pub with the right id") {
                 assertThat(pubs.single().id).isEqualTo(12345)
             }
+
+            it("the returned object contains a pub with the right createTS") {
+                assertThat(pubs.single().createTS).isEqualTo("2019-01-02 10:30:00")
+            }
+        }
+
+        context("when the regular and guest beer properties are not provided") {
+            val dummyJson = """
+                |{
+                |   "Pubs": [{
+                |       "Name": "Example pub",
+                |       "PubService": "http://example.com/pub/123",
+                |       "Id": "12345",
+                |       "CreateTS": "2019-01-02 10:30:00"
+                |   }]
+                |}""".trimMargin()
+
+            val mockPubCrawlApi = MockPubCrawlApi(dummyJson)
+            val pubFinder = createPubFinder(mockPubCrawlApi.mock)
+            val response = pubFinder(1.0, 1.0, 1.0)
+
+            it("regular and guest beer default to empty lists") {
+                val pub = response.single()
+                assertThat(pub.regularBeers).isEqualTo(emptyList<Beer>())
+                assertThat(pub.guestBeers).isEqualTo(emptyList<Beer>())
+            }
+
         }
     }
 })

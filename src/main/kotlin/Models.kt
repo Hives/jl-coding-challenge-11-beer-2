@@ -1,11 +1,13 @@
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
+import org.http4k.core.Body
+import org.http4k.format.Jackson.auto
 
 @JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy::class)
 data class Pub(
     val name: String,
-    val regularBeers: List<String>,
-    val guestBeers: List<String>,
+    val regularBeers: List<String> = emptyList(),
+    val guestBeers: List<String> = emptyList(),
     val pubService: String,
     val id: Int,
     val createTS: String

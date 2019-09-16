@@ -5,37 +5,37 @@ import Pub
 import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.hasSize
+import assertk.assertions.isEmpty
+import assertk.assertions.isNotEmpty
+import extractBeers
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import extractBeers
 
 object ExtractBeersTest : Spek({
-    val pub1 = Pub(
-        name = "Example pub 1",
-        regularBeers = listOf(
-            "Regular beer"
-        ),
-        guestBeers = listOf(),
-        pubService = "http://example.com/pub1",
-        id = 1,
-        createTS = "pub 1 created timestamp"
-    )
+    describe("Beer extractor") {
+        val pub1 = Pub(
+            name = "Example pub 1",
+            regularBeers = listOf(
+                "Regular beer"
+            ),
+            guestBeers = listOf(),
+            pubService = "http://example.com/pub1",
+            id = 1,
+            createTS = "pub 1 created timestamp"
+        )
 
-    val pub2 = Pub(
-        name = "Example pub 2",
-        regularBeers = listOf(),
-        guestBeers = listOf(
-            "Guest beer"
-        ),
-        pubService = "http://example.com/pub2",
-        id = 1,
-        createTS = "pub 2 created timestamp"
-    )
+        val pub2 = Pub(
+            name = "Example pub 2",
+            regularBeers = listOf(),
+            guestBeers = listOf(
+                "Guest beer"
+            ),
+            pubService = "http://example.com/pub2",
+            id = 2,
+            createTS = "pub 2 created timestamp"
+        )
 
-    val pubs = listOf(pub1, pub2)
-
-    describe("extracts a list of beers from a list of pubs") {
-        val actualOutput = pubs.extractBeers().sortedBy { it.name }
+        val actualOutput = listOf(pub1, pub2).extractBeers()
 
         it("two beers are extracted") {
             assertThat(actualOutput).hasSize(2)
@@ -61,6 +61,55 @@ object ExtractBeersTest : Spek({
                     isRegular = true
                 )
             )
+        }
+    }
+
+    describe("when there are duplicate entries") {
+        val oldEntry1 = Pub(
+            name = "Example pub",
+            regularBeers = listOf(
+                "Old regular beer"
+            ),
+            guestBeers = listOf(),
+            pubService = "http://example.com/pub1",
+            id = 1,
+            createTS = "2019-01-01 10:30:00"
+        )
+
+        val oldEntry2 = Pub(
+            name = "Example pub",
+            regularBeers = listOf(),
+            guestBeers = listOf(
+                "Old guest beer"
+            ),
+            pubService = "http://example.com/pub1",
+            id = 1,
+            createTS = "2019-01-02 10:30:00"
+        )
+
+        val newEntry = Pub(
+            name = "Example pub",
+            regularBeers = listOf(
+                "New regular beer"
+            ),
+            guestBeers = listOf(
+                "New guest beer"
+            ),
+            pubService = "http://example.com/pub1",
+            id = 1,
+            createTS = "2019-01-03 10:30:00"
+        )
+
+        val actualOutput = listOf(oldEntry1, newEntry, oldEntry2).extractBeers()
+
+        it("beers from old entries are not extracted") {
+            assertThat(actualOutput.filter { it.name == "Old regular beer" }).isEmpty()
+            assertThat(actualOutput.filter { it.name == "Old guest beer" }).isEmpty()
+        }
+
+        it("beers from newest entry are extracted") {
+            assertThat(actualOutput.filter { it.name == "New regular beer" }).isNotEmpty()
+            assertThat(actualOutput.filter { it.name == "New guest beer" }).isNotEmpty()
         }
     }
 })
