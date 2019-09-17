@@ -4,7 +4,7 @@ import Beer
 import Location
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import createPubFinder
+import createFindPubs
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -13,7 +13,7 @@ import org.http4k.routing.bind
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
-object PubFinderTest : Spek({
+object FindPubsTest : Spek({
     describe("the pub finder") {
 
         class MockPubCrawlApi(fakeResponseJson: String) {
@@ -41,7 +41,7 @@ object PubFinderTest : Spek({
                 |}""".trimMargin()
 
             val mockPubCrawlApi = MockPubCrawlApi(dummyJson)
-            val pubFinder = createPubFinder(mockPubCrawlApi.mock)
+            val pubFinder = createFindPubs(mockPubCrawlApi.mock)
 
             val location = Location(
                 lat = 20.00,
@@ -88,7 +88,7 @@ object PubFinderTest : Spek({
 
             val mockPubCrawlApi = MockPubCrawlApi(dummyJson)
 
-            val pubFinder = createPubFinder(mockPubCrawlApi.mock)
+            val pubFinder = createFindPubs(mockPubCrawlApi.mock)
 
             val pubs = pubFinder(Location(1.0, 1.0, 1.0))
 
@@ -129,7 +129,7 @@ object PubFinderTest : Spek({
                 |}""".trimMargin()
 
             val mockPubCrawlApi = MockPubCrawlApi(dummyJson)
-            val pubFinder = createPubFinder(mockPubCrawlApi.mock)
+            val pubFinder = createFindPubs(mockPubCrawlApi.mock)
             val response = pubFinder(Location(1.0, 1.0, 1.0))
 
             it("regular and guest beer default to empty lists") {

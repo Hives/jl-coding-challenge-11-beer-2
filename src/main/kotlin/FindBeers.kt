@@ -1,7 +1,5 @@
-internal fun createFindBeers(pubFinder: PubFinder) =
-    fun(location: Location): List<Beer> =
-        pubFinder(location)
-            .extractBeers()
+internal fun createFindBeers(findPubs: FindPubs) =
+    fun(location: Location): List<Beer> = findPubs(location).extractBeers()
 
 private fun List<Pub>.extractBeers(): List<Beer> = this
     .removeDuplicates()
@@ -16,9 +14,9 @@ private fun Pub.extractBeers(): List<Beer> =
         .map {
             val (beerName, isRegular) = it
             Beer(
-                beerName,
-                this.name,
-                this.pubService,
-                isRegular
+                name = beerName,
+                pub = this.name,
+                pubService = this.pubService,
+                isRegular = isRegular
             )
         }

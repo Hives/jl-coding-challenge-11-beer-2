@@ -4,9 +4,9 @@ import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.format.Jackson.auto
 
-internal typealias PubFinder = (Location) -> List<Pub>
+internal typealias FindPubs = (Location) -> List<Pub>
 
-internal fun createPubFinder(client: HttpHandler): PubFinder =
+internal fun createFindPubs (client: HttpHandler): FindPubs =
     fun(location: Location): List<Pub> {
         val (lng, lat, deg) = location
         val response = client(Request(GET, "/pubcache/?lat=${lat}&lng=${lng}&deg=${deg}"))

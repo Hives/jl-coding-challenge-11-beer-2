@@ -3,7 +3,7 @@ package unitTests
 import Beer
 import Location
 import Pub
-import PubFinder
+import FindPubs
 import assertk.assertThat
 import assertk.assertions.*
 import createFindBeers
@@ -38,7 +38,7 @@ object FindBeersTest : Spek({
         )
 
         val mockLocation = mockk<Location>()
-        val mockFindPubs = mockk<PubFinder>()
+        val mockFindPubs = mockk<FindPubs>()
         val findPubsCalledWith = slot<Location>()
         every { mockFindPubs(capture(findPubsCalledWith)) }
             .returns(listOf(pub1, pub2))
@@ -114,7 +114,7 @@ object FindBeersTest : Spek({
         )
 
         val mockLocation = mockk<Location>()
-        val mockFindPubs = mockk<PubFinder>()
+        val mockFindPubs = mockk<FindPubs>()
         val findPubsCalledWith = slot<Location>()
         every { mockFindPubs(capture(findPubsCalledWith)) }
             .returns(listOf(oldEntry1, newEntry, oldEntry2))
