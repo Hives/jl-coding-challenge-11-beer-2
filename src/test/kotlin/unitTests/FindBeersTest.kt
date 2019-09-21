@@ -51,30 +51,20 @@ object FindBeersTest : Spek({
             assertThat(findPubsCalledWith.captured).isEqualTo(mockLocation)
         }
 
-        it("two beers are extracted") {
-            assertThat(actualOutput).hasSize(2)
-        }
-
-        it("output contains first beer") {
-            assertThat(actualOutput).contains(
-                Beer(
-                    name = "Guest beer",
-                    pub = "Example pub 2",
-                    pubService = "http://example.com/pub2",
-                    isRegular = false
-                )
+        it("the correct two beers are returned") {
+            val expectedBeer1 = Beer(
+                name = "Regular beer",
+                pub = "Example pub 1",
+                pubService = "http://example.com/pub1",
+                isRegular = true
             )
-        }
-
-        it("output contains second beer") {
-            assertThat(actualOutput).contains(
-                Beer(
-                    name = "Regular beer",
-                    pub = "Example pub 1",
-                    pubService = "http://example.com/pub1",
-                    isRegular = true
-                )
+            val expectedBeer2 = Beer(
+                name = "Guest beer",
+                pub = "Example pub 2",
+                pubService = "http://example.com/pub2",
+                isRegular = false
             )
+            assertThat(actualOutput).containsOnly(expectedBeer1, expectedBeer2)
         }
     }
 
