@@ -39,6 +39,7 @@ object FindBeersTest : Spek({
 
         val mockLocation = mockk<Location>()
         val mockFindPubs = mockk<FindPubs>()
+
         val findPubsCalledWith = slot<Location>()
         every { mockFindPubs(capture(findPubsCalledWith)) }
             .returns(listOf(pub1, pub2))
