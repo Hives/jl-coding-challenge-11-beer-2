@@ -19,6 +19,6 @@ private fun Pub.extractBeers(): List<Beer> =
                 name = beerName,
                 pub = this.name,
                 pubService = this.pubService,
-                isRegular = isRegular
+                regular = isRegular
             )
         }

@@ -1,5 +1,7 @@
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
+import org.http4k.core.Body
+import org.http4k.format.Jackson.auto
 
 @JsonNaming(PropertyNamingStrategy.UpperCamelCaseStrategy::class)
 data class Pub(
@@ -24,5 +26,11 @@ data class Beer(
     val name: String,
     val pub: String,
     val pubService: String,
-    val isRegular: Boolean
+    val regular: Boolean
 )
+
+data class Beers(val beers: List<Beer>) {
+    companion object {
+        val format = Body.auto<Beers>().toLens()
+    }
+}

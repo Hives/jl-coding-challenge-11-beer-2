@@ -59,13 +59,13 @@ object FindBeersTest : Spek({
                 name = "Regular beer",
                 pub = "Example pub 1",
                 pubService = "http://example.com/pub1",
-                isRegular = true
+                regular = true
             )
             val expectedBeer2 = Beer(
                 name = "Guest beer",
                 pub = "Example pub 2",
                 pubService = "http://example.com/pub2",
-                isRegular = false
+                regular = false
             )
             assertThat(actualOutput).containsOnly(expectedBeer1, expectedBeer2)
         }
