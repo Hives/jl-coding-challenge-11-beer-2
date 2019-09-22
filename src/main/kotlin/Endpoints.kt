@@ -6,6 +6,6 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 
 internal fun endpoints(): HttpHandler = routes(
-    "/" bind GET to { Response(OK).body("Hello") },
-    findBeersEndpoint()
+    "/" bind GET to { Response(OK).body("Hello") }
+//    findBeersEndpoint()
 )

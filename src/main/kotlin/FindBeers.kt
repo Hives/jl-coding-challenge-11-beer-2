@@ -1,5 +1,7 @@
-internal fun createFindBeers(findPubs: FindPubs) =
-    fun(location: Location): List<Beer> = findPubs(location).extractBeers()
+internal typealias BeerFinder = (Location) -> List<Beer>
+
+internal fun createFindBeers(findPubs: FindPubs) : BeerFinder =
+    fun(location: Location) = findPubs(location).extractBeers()
 
 private fun List<Pub>.extractBeers(): List<Beer> = this
     .removeDuplicates()
