@@ -29,7 +29,7 @@ object FindPubsTest : Spek({
         }
 
         describe("calls the API with the correct parameters") {
-            val dummyJson = """{
+            val mockApiResponse = """{
                 |   "Pubs": [{
                 |       "Name": "",
                 |       "RegularBeers": [],
@@ -40,7 +40,7 @@ object FindPubsTest : Spek({
                 |   }]
                 |}""".trimMargin()
 
-            val mockPubCrawlApi = MockPubCrawlApi(dummyJson)
+            val mockPubCrawlApi = MockPubCrawlApi(mockApiResponse)
             val pubFinder = createFindPubs(mockPubCrawlApi.mock)
 
             val location = Location(
@@ -69,7 +69,7 @@ object FindPubsTest : Spek({
         }
 
         describe("returns the correct response") {
-            val dummyJson = """{
+            val mockApiResponse = """{
                 "Pubs": [{
                 |       "Name": "Example pub",
                 |       "RegularBeers": [
@@ -86,7 +86,7 @@ object FindPubsTest : Spek({
                 |   }]
                 |}""".trimMargin()
 
-            val mockPubCrawlApi = MockPubCrawlApi(dummyJson)
+            val mockPubCrawlApi = MockPubCrawlApi(mockApiResponse)
 
             val pubFinder = createFindPubs(mockPubCrawlApi.mock)
 
