@@ -5,7 +5,10 @@ import Location
 import Pub
 import FindPubs
 import assertk.assertThat
-import assertk.assertions.*
+import assertk.assertions.containsOnly
+import assertk.assertions.isEmpty
+import assertk.assertions.isEqualTo
+import assertk.assertions.isNotEmpty
 import createFindBeers
 import io.mockk.every
 import io.mockk.mockk
