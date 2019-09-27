@@ -2,9 +2,12 @@ package unitTests
 
 import Beer
 import Location
+import Pub
+import Pubs
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import createFindPubs
+import jsonMapper
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -68,56 +71,36 @@ object FindPubsTest : Spek({
             }
         }
 
-        describe("returns the correct response") {
-            val mockApiResponse = """{
-                "Pubs": [{
-                |       "Name": "Example pub",
-                |       "RegularBeers": [
-                |           "Regular beer 1",
-                |           "Regular beer 2"
-                |       ],
-                |       "GuestBeers": [
-                |           "Guest beer 1",
-                |           "Guest beer 2"
-                |       ],
-                |       "PubService": "http://example.com/pub/123",
-                |       "Id": "12345",
-                |       "CreateTS": "2019-01-02 10:30:00"
-                |   }]
-                |}""".trimMargin()
+        describe("returns the API response") {
+            val expectedPub = Pub(
+                name = "Example pub",
+                regularBeers = listOf(
+                    "Regular beer 1",
+                    "Regular beer 2"
+                ),
+                guestBeers = listOf(
+                    "Guest beer 1",
+                    "Guest beer 2"
+                ),
+                pubService = "http://example.com/pub/123",
+                id = 12345,
+                createTS = "2019-01-02 10:30:00"
+            )
+            val mockApiResponse = jsonMapper().writeValueAsString(Pubs(listOf(expectedPub)))
 
             val mockPubCrawlApi = MockPubCrawlApi(mockApiResponse)
-
             val pubFinder = createFindPubs(mockPubCrawlApi.mock)
-
             val pubs = pubFinder(Location(1.0, 1.0, 1.0))
 
-            it("the returned object contains a pub with the right name") {
-                assertThat(pubs.single().name).isEqualTo("Example pub")
+            val returnedPub = pubs.single()
+
+            it("returns the expected pub") {
+                assertThat(returnedPub).isEqualTo(expectedPub)
             }
 
-            it("the returned object contains a pub with the right regular beers") {
-                assertThat(pubs.single().regularBeers).isEqualTo(listOf("Regular beer 1", "Regular beer 2"))
-            }
-
-            it("the returned object contains a pub with the right guest beers") {
-                assertThat(pubs.single().guestBeers).isEqualTo(listOf("Guest beer 1", "Guest beer 2"))
-            }
-
-            it("the returned object contains a pub with the right pubservice") {
-                assertThat(pubs.single().pubService).isEqualTo("http://example.com/pub/123")
-            }
-
-            it("the returned object contains a pub with the right id") {
-                assertThat(pubs.single().id).isEqualTo(12345)
-            }
-
-            it("the returned object contains a pub with the right createTS") {
-                assertThat(pubs.single().createTS).isEqualTo("2019-01-02 10:30:00")
-            }
         }
 
-        context("when the regular and guest beer properties are not provided") {
+        describe("it doesn't fall over if regular and guest beers are not provided") {
             val dummyJson = """
                 |{
                 |   "Pubs": [{
@@ -138,6 +121,6 @@ object FindPubsTest : Spek({
                 assertThat(pub.guestBeers).isEqualTo(emptyList<Beer>())
             }
 
-        }
+        } 
     }
 })
