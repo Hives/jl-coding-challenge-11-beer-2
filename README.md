@@ -1,4 +1,4 @@
-# John Lewis Coding Challenge 11
+# Beer API
 
 Access the `pubcrawlapi.appspot.com/pubcache` api, get all the pubs in the area,
 and return a list of all the beers available at those pubs.
