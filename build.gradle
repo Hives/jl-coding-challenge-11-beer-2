@@ -51,6 +51,7 @@ jib {
             username = 'hives'
             password = System.getenv("DOCKER_IO_PASSWORD")
         }
+        tags = setOf(version.toString())
     }
 }
 
