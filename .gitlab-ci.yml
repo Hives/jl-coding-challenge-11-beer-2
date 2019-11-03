@@ -1,5 +1,6 @@
 stages:
   - build
+  - deploy
 
 .gradle-image: &gradle-image
   image: gradle:5.5-jdk12
@@ -19,3 +20,15 @@ build:
     DOCKER_DRIVER: overlay2
   script:
     - gradle test build jib
+
+deploy:
+  stage: deploy
+  image: cloud-sdk:alpine
+  before_script:
+    - gcloud components install kubectl
+    - echo "GOOGLE_CREDENTIALS" > key.json
+    - gcloud auth activate-service-account --key-file=key.json
+    - gcloud container clusters get-credentials beer-api
+  script:
+    - kubectl set image deployment/beer-api beer-api=hives/beer-api:latest
+    - kubectl get pods
