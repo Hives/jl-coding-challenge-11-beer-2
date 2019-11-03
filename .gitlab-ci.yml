@@ -26,7 +26,7 @@ deploy:
   image: google/cloud-sdk:alpine
   before_script:
     - gcloud components install kubectl
-    - echo "GOOGLE_CREDENTIALS" > key.json
+    - echo "$GOOGLE_CREDENTIALS" > key.json
     - gcloud auth activate-service-account --key-file=key.json
     - gcloud container clusters get-credentials beer-api
   script:
