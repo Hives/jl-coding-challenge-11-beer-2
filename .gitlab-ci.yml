@@ -18,4 +18,4 @@ build:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
   script:
-    - gradle test build job --info
+    - gradle test build jib --info
