@@ -23,7 +23,7 @@ build:
 
 deploy:
   stage: deploy
-  image: cloud-sdk:alpine
+  image: google/cloud-sdk:alpine
   before_script:
     - gcloud components install kubectl
     - echo "GOOGLE_CREDENTIALS" > key.json
