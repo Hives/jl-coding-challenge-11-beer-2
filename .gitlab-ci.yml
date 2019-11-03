@@ -25,10 +25,10 @@ deploy:
   stage: deploy
   image: google/cloud-sdk:alpine
   before_script:
-    - gcloud components install kubectl
+    - gcloud components install kubectl --quiet
     - echo "$GOOGLE_CREDENTIALS" > key.json
     - gcloud auth activate-service-account --key-file=key.json
-#    - gcloud container clusters get-credentials beer-api
+    - gcloud container clusters get-credentials ${BEER_CLUSTER} --zone ${BEER_ZONE} --project ${BEER_K8S_PROJECT}
   script:
     - kubectl set image deployment/beer-api beer-api=hives/beer-api:latest
     - kubectl get pods

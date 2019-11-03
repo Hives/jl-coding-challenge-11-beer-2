@@ -46,7 +46,7 @@ jib {
         image = "azul/zulu-openjdk-alpine:12"
     }
     to {
-        image = "hives/beer-api"
+        image = "hives/beer-api:latest"
         auth {
             username = 'hives'
             password = System.getenv("DOCKER_IO_PASSWORD")
