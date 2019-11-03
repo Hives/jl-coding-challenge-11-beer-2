@@ -11,7 +11,6 @@ stages:
 
 build:
   <<: *gradle-image
-  <<: *dind-service
   stage: build
   variables:
     DOCKER_IO_PASSWORD: $DOCKER_IO_PASSWORD
