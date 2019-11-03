@@ -4,7 +4,9 @@ import org.http4k.server.Jetty
 import org.http4k.server.asServer
 
 fun main() {
-    val server = server(9999, endpoints("http://localhost:3002/"))
+    val port = 9999
+    val server = server(port, endpoints("http://pubcrawlapi.appspot.com/"))
+    println("Starting application on port 9999")
     server.start()
 }
 

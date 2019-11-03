@@ -13,10 +13,16 @@ object EndToEndTest: Spek({
         val server = server(port, endpoints("http://example.com"))
         val client = OkHttp()
 
-        it ("GET '/' should return 200 (Success)") {
+        beforeGroup {
             server.start()
-            assertThat(client(Request(GET, "http://localhost:$port")).status).isEqualTo(OK)
+        }
+
+        afterGroup {
             server.stop()
+        }
+
+        it ("GET '/' should return 200 (Success)") {
+            assertThat(client(Request(GET, "http://localhost:$port")).status).isEqualTo(OK)
         }
     }
 })
