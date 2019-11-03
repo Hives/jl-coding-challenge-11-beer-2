@@ -16,7 +16,7 @@ internal fun endpoints(pubCrawlUri: String): HttpHandler {
     return ServerFilters.CatchLensFailure
         .then(
             routes(
-                "/" bind GET to { Response(OK).body("Hello 4") },
+                "/" bind GET to { Response(OK).body("Hello 5") },
                 findBeersEndpoint(findBeers)
             )
         )
