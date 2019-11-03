@@ -28,7 +28,7 @@ deploy:
     - gcloud components install kubectl
     - echo "$GOOGLE_CREDENTIALS" > key.json
     - gcloud auth activate-service-account --key-file=key.json
-    - gcloud container clusters get-credentials beer-api
+#    - gcloud container clusters get-credentials beer-api
   script:
     - kubectl set image deployment/beer-api beer-api=hives/beer-api:latest
     - kubectl get pods
