@@ -6,6 +6,7 @@ import Pub
 import Pubs
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isFalse
 import createFindPubs
 import jsonMapper
 import org.http4k.core.Method.GET
@@ -68,6 +69,10 @@ object FindPubsTest : Spek({
 
             it("the api is called with the specified deg") {
                 assertThat(mockPubCrawlApi.receivedRequest.query("deg")).isEqualTo(location.deg.toString())
+            }
+
+            it("a failing test") {
+                assertThat(true).isFalse()
             }
         }
 
