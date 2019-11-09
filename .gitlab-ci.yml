@@ -2,11 +2,8 @@ stages:
   - build
   - deploy
 
-.gradle-image: &gradle-image
-  image: gradle:5.5-jdk12
-
 build:
-  <<: *gradle-image
+  image: gradle:5.5-jdk12
   stage: build
   variables:
     DOCKER_IO_PASSWORD: $DOCKER_IO_PASSWORD
@@ -18,8 +15,8 @@ deploy:
   image: google/cloud-sdk:alpine
   before_script:
     - gcloud components install kubectl --quiet
-    - echo "$GOOGLE_CREDENTIALS" > key.json
-    - gcloud auth activate-service-account --key-file=key.json
+    - echo "$GOOGLE_CREDENTIALS" > creds.json
+    - gcloud auth activate-service-account --key-file=creds.json
     - gcloud container clusters get-credentials ${BEER_CLUSTER} --zone ${BEER_ZONE} --project ${BEER_K8S_PROJECT}
   script:
     - kubectl set image deployment/beer-api beer-api=hives/beer-api:${CI_COMMIT_SHORT_SHA}
