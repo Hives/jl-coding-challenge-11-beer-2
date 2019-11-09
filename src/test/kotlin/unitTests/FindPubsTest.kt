@@ -70,10 +70,6 @@ object FindPubsTest : Spek({
             it("the api is called with the specified deg") {
                 assertThat(mockPubCrawlApi.receivedRequest.query("deg")).isEqualTo(location.deg.toString())
             }
-
-            it("a failing test") {
-                assertThat(true).isFalse()
-            }
         }
 
         describe("returns the API response") {
