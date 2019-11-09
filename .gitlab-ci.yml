@@ -5,18 +5,11 @@ stages:
 .gradle-image: &gradle-image
   image: gradle:5.5-jdk12
 
-.dind-service: &dind-service
-  services:
-    - docker:17.09.0-ce-dind
-
 build:
   <<: *gradle-image
   stage: build
   variables:
     DOCKER_IO_PASSWORD: $DOCKER_IO_PASSWORD
-    # Instruct TestContainers to use the daemon of DinD
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_DRIVER: overlay2
   script:
     - gradle test build jib -Djib.to.tags=${CI_COMMIT_SHORT_SHA}
 
